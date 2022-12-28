@@ -1,0 +1,136 @@
+{\rtf1\ansi\ansicpg1254\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 #include<stdio.h>\
+#include<stdlib.h>\
+// AVL a\uc0\u287 ac\u305  i\'e7in d\'fc\u287 \'fcm\
+struct Node\
+\{\
+    int key;\
+    struct Node *left;\
+    struct Node *right;\
+    int height;\
+\};\
+\
+int height(struct Node *N)\
+\{\
+    if (N == NULL)\
+        return 0;\
+    return N->height;\
+\}\
+int max(int a, int b)\
+\{\
+    return (a > b)? a : b;\
+\}\
+struct Node* newNode(int key)\
+\{\
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));\
+    node->key   = key;\
+    node->left   = NULL;\
+    node->right  = NULL;\
+    node->height = 1;\
+    // Yeni d\'fc\uc0\u287 \'fcm ilk olarak yaprakta eklenir\
+    return(node);\
+\}\
+\
+struct Node *rightRotate(struct Node *y)\
+\
+\{\
+    struct Node *x = y->left;\
+    struct Node *T2 = x->right;\
+    // D\'f6nd\'fcrme\
+    x->right = y;\
+    y->left = T2;\
+    // Y\'fckseklikler g\'fcncelleniyor\
+    y->height = max(height(y->left), height(y->right))+1;\
+    x->height = max(height(x->left), height(x->right))+1;\
+    // yeni kok\
+    return x;\
+\}\
+\
+struct Node *leftRotate(struct Node *x)\
+\{\
+    struct Node *y = x->right;\
+    struct Node *T2 = y->left;\
+    // d\'f6nd\'fcrme\
+    y->left = x;\
+    x->right = T2;\
+    //  Y\'fckseklikler g\'fcncelleniyor\
+    x->height = max(height(x->left), height(x->right))+1;\
+    y->height = max(height(y->left), height(y->right))+1;\
+    // yeni kok\
+    return y;\
+\}\
+\
+// N. d\'fc\uc0\u287 \'fcm i\'e7in denge fakt\'f6r\'fc\
+int getBalance(struct Node *N)\
+\{\
+    if (N == NULL)		return 0;\
+    return height(N->left) - height(N->right);\
+\}\
+struct Node* insert(struct Node* node, int key)\
+\{\
+    /* BST a\uc0\u287 ac\u305 na ekleme */\
+    if (node == NULL)  return(newNode(key));\
+    if (key < node->key)  node->left  = insert(node->left, key);\
+    else if (key > node->key)  node->right = insert(node->right, key);\
+    else  return node;\
+    /* 2. Y\'fckseklikler g\'fcncelleniyor */\
+    node->height = 1 + max(height(node->left), height(node->right));\
+    /* 3. Yeni ekleme i\uc0\u351 lemi ile denge hesaplan\u305 yor */\
+    int balance = getBalance(node);\
+    // Eklenen d\'fc\uc0\u287 \'fcm dengesiz ise 4 durum vard\u305 r\
+    // Solun solu\
+    if (balance > 1 && key < node->left->key)	return rightRotate(node);\
+    // Sa\uc0\u287 \u305 n sa\u287 \u305 \
+    if (balance < -1 && key > node->right->key)  return leftRotate(node);\
+    // Solun sa\uc0\u287 \u305 \
+    if (balance > 1 && key > node->left->key)\
+    \{\
+        node->left =  leftRotate(node->left);\
+        return rightRotate(node);\
+\
+    \}\
+    // Sa\uc0\u287 \u305 n solu\
+    if (balance < -1 && key < node->right->key)\
+    \{\
+        node->right = rightRotate(node->right);\
+        return leftRotate(node);\
+    \}\
+    return node;\
+\}\
+// A\uc0\u287 a\'e7 i\'e7inde dola\u351 ma\
+void preOrder(struct Node *root)\
+\{\
+    if(root != NULL)\
+    \{\
+        printf("%d %d \\n", root->key,root->height);\
+        preOrder(root->left);\
+        preOrder(root->right);\
+    \}\
+\}\
+\
+\
+int main()\
+\{\
+    struct Node *root = NULL;\
+    root = insert(root, 10);\
+    root = insert(root, 20);\
+    root = insert(root, 30);\
+    root = insert(root, 40);\
+    root = insert(root, 50);\
+    root = insert(root, 25);\
+\
+    printf("AVL a\uc0\u287 ac\u305 nda Preorder dola\u351 ma:\\n");\
+    preOrder(root);\
+       	return 0;\
+\
+\}\
+\
+\
+\
+}
