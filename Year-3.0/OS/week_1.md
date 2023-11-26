@@ -1,0 +1,2 @@
+# işletim sistemi nedir ?
+
